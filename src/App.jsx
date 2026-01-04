@@ -5,6 +5,10 @@ import Register from './components/auth/Register';
 import ProtectedRoute from './components/auth/ProtectedRoute';
 import Layout from './components/Layout';
 import Dashboard from './pages/Dashboard';
+import Upload from './pages/Upload';
+import VideoLibrary from './pages/VideoLibrary';
+import VideoPlayer from './pages/VideoPlayer';
+import Users from './pages/Users';
 import './App.css';
 
 function App() {
@@ -30,7 +34,7 @@ function App() {
             element={
               <ProtectedRoute>
                 <Layout>
-                  <div>Upload Page - Coming Soon</div>
+                  <Upload />
                 </Layout>
               </ProtectedRoute>
             } 
@@ -40,7 +44,17 @@ function App() {
             element={
               <ProtectedRoute>
                 <Layout>
-                  <div>Video Library - Coming Soon</div>
+                  <VideoLibrary />
+                </Layout>
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/videos/:id" 
+            element={
+              <ProtectedRoute>
+                <Layout>
+                  <VideoPlayer />
                 </Layout>
               </ProtectedRoute>
             } 
@@ -50,7 +64,7 @@ function App() {
             element={
               <ProtectedRoute>
                 <Layout>
-                  <div>Users - Coming Soon</div>
+                  <Users />
                 </Layout>
               </ProtectedRoute>
             } 

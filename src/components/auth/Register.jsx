@@ -133,6 +133,7 @@ const Register = () => {
               onChange={handleChange}
               disabled={loading}
             >
+              <option value="admin">Admin</option>
               <option value="editor">Editor</option>
               <option value="viewer">Viewer</option>
             </select>

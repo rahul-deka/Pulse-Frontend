@@ -61,12 +61,16 @@ const Dashboard = () => {
   const formatTimeAgo = (date) => {
     const now = new Date();
     const uploaded = new Date(date);
-    const diffHours = Math.floor((now - uploaded) / (1000 * 60 * 60));
+    const diffMs = now - uploaded;
+    const diffMinutes = Math.floor(diffMs / (1000 * 60));
+    const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+    const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
     
-    if (diffHours < 1) return 'Just now';
-    if (diffHours < 24) return `${diffHours} hours ago`;
-    if (diffHours < 48) return '1 day ago';
-    return `${Math.floor(diffHours / 24)} days ago`;
+    if (diffMinutes < 1) return 'Just now';
+    if (diffMinutes < 60) return `${diffMinutes} ${diffMinutes === 1 ? 'minute' : 'minutes'} ago`;
+    if (diffHours < 24) return `${diffHours} ${diffHours === 1 ? 'hour' : 'hours'} ago`;
+    if (diffDays === 1) return '1 day ago';
+    return `${diffDays} days ago`;
   };
 
   if (loading) {

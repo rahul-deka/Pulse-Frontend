@@ -17,7 +17,7 @@ const Layout = ({ children }) => {
     { path: '/dashboard', icon: MdDashboard, label: 'Dashboard' },
     { path: '/upload', icon: MdUpload, label: 'Upload Video' },
     { path: '/videos', icon: MdVideoLibrary, label: 'Video Library' },
-    { path: '/users', icon: MdPeople, label: 'Users' },
+    ...(user?.role === 'admin' ? [{ path: '/users', icon: MdPeople, label: 'Users' }] : []),
     { path: '/settings', icon: MdSettings, label: 'Settings' },
   ];
 

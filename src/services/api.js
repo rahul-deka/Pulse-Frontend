@@ -26,7 +26,6 @@ api.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
-      // Token expired or invalid
       localStorage.removeItem('token');
       localStorage.removeItem('user');
       window.location.href = '/login';
@@ -49,6 +48,7 @@ export const videoAPI = {
     }),
   getAll: () => api.get('/videos'),
   getById: (id) => api.get(`/videos/${id}`),
+  update: (id, data) => api.put(`/videos/${id}`, data),
   stream: (id) => api.get(`/videos/${id}/stream`, {
     responseType: 'blob',
   }),
