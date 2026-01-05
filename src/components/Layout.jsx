@@ -1,12 +1,26 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { MdDashboard, MdUpload, MdVideoLibrary, MdPeople, MdSettings, MdLogout, MdNotifications, MdPerson } from 'react-icons/md';
+import { useState, useRef, useEffect } from 'react';
 import './Layout.css';
 
 const Layout = ({ children }) => {
   const location = useLocation();
   const navigate = useNavigate();
   const { logout, user } = useAuth();
+  const [showUserMenu, setShowUserMenu] = useState(false);
+  const userMenuRef = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (userMenuRef.current && !userMenuRef.current.contains(event.target)) {
+        setShowUserMenu(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   const handleLogout = () => {
     logout();
@@ -63,9 +77,33 @@ const Layout = ({ children }) => {
             <button className="icon-btn">
               <MdNotifications />
             </button>
-            <button className="icon-btn">
-              <MdPerson />
-            </button>
+            <div className="user-menu-container" ref={userMenuRef}>
+              <button 
+                className="icon-btn user-btn"
+                onClick={() => setShowUserMenu(!showUserMenu)}
+              >
+                <MdPerson />
+              </button>
+              {showUserMenu && (
+                <div className="user-dropdown">
+                  <div className="user-info">
+                    <div className="user-avatar">
+                      <MdPerson />
+                    </div>
+                    <div className="user-details">
+                      <p className="user-name">{user?.name || 'User'}</p>
+                      <p className="user-email">{user?.email}</p>
+                      <span className="user-role-badge">{user?.role || 'user'}</span>
+                    </div>
+                  </div>
+                  <div className="dropdown-divider"></div>
+                  <button onClick={handleLogout} className="dropdown-logout-btn">
+                    <MdLogout />
+                    <span>Logout</span>
+                  </button>
+                </div>
+              )}
+            </div>
           </div>
         </header>
 

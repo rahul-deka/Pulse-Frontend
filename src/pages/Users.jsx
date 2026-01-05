@@ -3,6 +3,7 @@ import { useAuth } from '../context/AuthContext';
 import { MdPerson, MdMoreVert, MdSearch } from 'react-icons/md';
 import api from '../services/api';
 import './Users.css';
+import '../components/Skeleton.css';
 
 const Users = () => {
   const { user: currentUser } = useAuth();
@@ -14,6 +15,7 @@ const Users = () => {
   const [updatingUserId, setUpdatingUserId] = useState(null);
   const [openMenuUserId, setOpenMenuUserId] = useState(null);
   const [menuPosition, setMenuPosition] = useState({ top: 0, left: 0 });
+  const [deleteConfirmModal, setDeleteConfirmModal] = useState({ show: false, userId: null, userEmail: '' });
   const menuRef = useRef(null);
 
   useEffect(() => {
@@ -100,25 +102,35 @@ const Users = () => {
     return new Date(date).toISOString().split('T')[0];
   };
 
-  const handleRemoveUser = async (userId) => {
-    if (userId === currentUser.id || userId === currentUser._id) {
+  const handleRemoveUser = (user) => {
+    const userId = user.id || user._id;
+    const currentUserId = currentUser.id || currentUser._id;
+    
+    if (userId === currentUserId) {
       alert("You cannot remove yourself");
       return;
     }
 
-    if (!window.confirm('Are you sure you want to remove this user? This action cannot be undone.')) {
-      return;
-    }
+    setDeleteConfirmModal({ show: true, userId, userEmail: user.email });
+    setOpenMenuUserId(null);
+  };
 
+  const confirmDelete = async () => {
+    const userId = deleteConfirmModal.userId;
+    setDeleteConfirmModal({ show: false, userId: null, userEmail: '' });
+    
     setError('');
     try {
       await api.delete(`/auth/users/${userId}`);
       
       setUsers(users.filter(u => u.id !== userId && u._id !== userId));
-      setOpenMenuUserId(null);
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to remove user');
     }
+  };
+
+  const cancelDelete = () => {
+    setDeleteConfirmModal({ show: false, userId: null, userEmail: '' });
   };
 
   const toggleMenu = (userId, event) => {
@@ -147,7 +159,32 @@ const Users = () => {
   };
 
   if (loading) {
-    return <div className="loading">Loading users...</div>;
+    return (
+      <div className="users-page">
+        <div className="search-section">
+          <div className="search-bar">
+            <MdSearch className="search-icon" />
+            <input type="text" placeholder="Search users..." disabled />
+          </div>
+        </div>
+        <div className="skeleton-table skeleton-users-table">
+          <div className="skeleton-table-header">
+            {[1, 2, 3, 4, 5].map(i => (
+              <div key={i} className="skeleton"></div>
+            ))}
+          </div>
+          {[1, 2, 3, 4, 5, 6].map(i => (
+            <div key={i} className="skeleton-table-row">
+              <div className="skeleton skeleton-table-cell"></div>
+              <div className="skeleton skeleton-table-cell"></div>
+              <div className="skeleton skeleton-table-cell"></div>
+              <div className="skeleton skeleton-table-cell"></div>
+              <div className="skeleton skeleton-table-cell"></div>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -270,7 +307,7 @@ const Users = () => {
                           <div className="dropdown-divider"></div>
                           <button
                             className="dropdown-item danger"
-                            onClick={() => handleRemoveUser(userId)}
+                            onClick={() => handleRemoveUser(user)}
                           >
                             Remove User
                           </button>
@@ -281,6 +318,29 @@ const Users = () => {
                 </div>
               </div>
             )})}
+          </div>
+        </div>
+      )}
+
+      {deleteConfirmModal.show && (
+        <div className="modal-overlay" onClick={cancelDelete}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <h3 className="modal-title">Remove User</h3>
+            <p className="modal-message">
+              Are you sure you want to remove <strong>{deleteConfirmModal.userEmail}</strong>?
+              <br />
+              This will also delete all videos uploaded by this user.
+              <br />
+              This action cannot be undone.
+            </p>
+            <div className="modal-actions">
+              <button className="modal-btn cancel" onClick={cancelDelete}>
+                Cancel
+              </button>
+              <button className="modal-btn delete" onClick={confirmDelete}>
+                Remove
+              </button>
+            </div>
           </div>
         </div>
       )}

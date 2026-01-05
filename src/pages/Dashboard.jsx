@@ -1,9 +1,12 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { videoAPI } from '../services/api';
 import { MdVideoLibrary, MdTrendingUp, MdCheckCircle, MdAccessTime, MdVideocam } from 'react-icons/md';
 import './Dashboard.css';
+import '../components/Skeleton.css';
 
 const Dashboard = () => {
+  const navigate = useNavigate();
   const [stats, setStats] = useState({
     total: 0,
     processing: 0,
@@ -52,12 +55,6 @@ const Dashboard = () => {
     return badges[status] || badges.processing;
   };
 
-  const getProgressPercentage = (status) => {
-    if (status === 'completed') return 100;
-    if (status === 'processing') return 60;
-    return 30;
-  };
-
   const formatTimeAgo = (date) => {
     const now = new Date();
     const uploaded = new Date(date);
@@ -74,7 +71,33 @@ const Dashboard = () => {
   };
 
   if (loading) {
-    return <div className="loading">Loading...</div>;
+    return (
+      <div className="dashboard">
+        <div className="skeleton-stats-grid">
+          {[1, 2, 3, 4].map(i => (
+            <div key={i} className="skeleton-stat-card">
+              <div className="skeleton-stat-header">
+                <div className="skeleton skeleton-stat-label"></div>
+                <div className="skeleton skeleton-stat-icon"></div>
+              </div>
+              <div className="skeleton skeleton-stat-value"></div>
+            </div>
+          ))}
+        </div>
+        <div className="skeleton skeleton-section-title"></div>
+        <div className="skeleton-video-list">
+          {[1, 2, 3].map(i => (
+            <div key={i} className="skeleton-video-item">
+              <div className="skeleton skeleton-thumbnail"></div>
+              <div className="skeleton-video-content">
+                <div className="skeleton skeleton-video-title"></div>
+                <div className="skeleton skeleton-video-time"></div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -123,7 +146,12 @@ const Dashboard = () => {
         ) : (
           <div className="recent-videos">
             {recentVideos.map((video) => (
-              <div key={video._id} className="video-item">
+              <div 
+                key={video._id} 
+                className="video-item"
+                onClick={() => navigate(`/videos/${video._id}`)}
+                style={{ cursor: 'pointer' }}
+              >
                 <div className="video-thumbnail">
                   <MdVideocam className="thumbnail-icon" />
                 </div>
@@ -137,13 +165,6 @@ const Dashboard = () => {
                   </div>
                   
                   <p className="video-time">{formatTimeAgo(video.uploadedAt)}</p>
-                  
-                  <div className="progress-bar">
-                    <div 
-                      className="progress-fill" 
-                      style={{ width: `${getProgressPercentage(video.processingStatus)}%` }}
-                    ></div>
-                  </div>
                 </div>
               </div>
             ))}

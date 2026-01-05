@@ -212,6 +212,11 @@ const Upload = () => {
           <li>Large files (1GB+) may take 10-30 minutes to process</li>
           <li>You'll receive a notification when processing is complete</li>
         </ul>
+        <div className="storage-warning">
+          <strong>Storage Notice:</strong> This deployment uses local filesystem storage on Render's free tier, 
+          which features ephemeral storage. Videos may be automatically removed when the server restarts due to 
+          inactivity (typically after 15 minutes).
+        </div>
       </div>
     </div>
   );

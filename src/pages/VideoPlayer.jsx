@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { videoAPI } from '../services/api';
-import { MdArrowBack, MdDownload } from 'react-icons/md';
+import { MdArrowBack } from 'react-icons/md';
 import './VideoPlayer.css';
 
 const VideoPlayer = () => {
@@ -63,16 +63,6 @@ const VideoPlayer = () => {
     return badges[status] || badges.processing;
   };
 
-  const handleDownload = () => {
-    const streamUrl = `${import.meta.env.VITE_API_URL.replace('/api', '')}/api/videos/${id}/stream`;
-    const link = document.createElement('a');
-    link.href = streamUrl;
-    link.download = video.filename;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-  };
-
   if (loading) {
     return (
       <div className="video-player-page">
@@ -94,15 +84,13 @@ const VideoPlayer = () => {
 
   return (
     <div className="video-player-page">
-      {/* Header */}
       <div className="player-header">
-        <button className="back-btn" onClick={() => navigate('/videos')}>
+        <button className="back-btn" onClick={() => navigate(-1)}>
           <MdArrowBack />
-          <span>Back to Library</span>
+          <span>Back</span>
         </button>
       </div>
 
-      {/* Video Player */}
       <div className="player-container">
         <video
           ref={videoRef}
@@ -114,7 +102,6 @@ const VideoPlayer = () => {
         </video>
       </div>
 
-      {/* Video Info */}
       <div className="video-info-section">
         <div className="video-header-row">
           <div className="video-title-row">
@@ -123,10 +110,6 @@ const VideoPlayer = () => {
               {getStatusBadge(video.processingStatus === 'completed' ? video.sensitivityStatus : video.processingStatus).label}
             </span>
           </div>
-          <button className="download-btn" onClick={handleDownload}>
-            <MdDownload />
-            <span>Download</span>
-          </button>
         </div>
         <p className="video-meta">
           Uploaded on {formatDate(video.uploadedAt)} • {formatDuration(video.duration)} • {formatSize(video.size)}

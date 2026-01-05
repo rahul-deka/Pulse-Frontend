@@ -1,0 +1,281 @@
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    #1a1a1a 0%,
+    #2a2a2a 50%,
+    #1a1a1a 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 8px;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+.skeleton-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 24px;
+  margin-bottom: 32px;
+}
+
+.skeleton-stat-card {
+  height: 120px;
+  background: #1a1a1a;
+  border: 1px solid #2a2a2a;
+  border-radius: 12px;
+  padding: 20px;
+}
+
+.skeleton-stat-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.skeleton-stat-label {
+  width: 80px;
+  height: 16px;
+}
+
+.skeleton-stat-icon {
+  width: 24px;
+  height: 24px;
+  border-radius: 6px;
+}
+
+.skeleton-stat-value {
+  width: 60px;
+  height: 36px;
+}
+
+.skeleton-section-title {
+  width: 180px;
+  height: 24px;
+  margin-bottom: 24px;
+}
+
+.skeleton-video-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.skeleton-video-item {
+  display: flex;
+  gap: 16px;
+  padding: 16px;
+  background: #0f0f0f;
+  border: 1px solid #2a2a2a;
+  border-radius: 8px;
+}
+
+.skeleton-thumbnail {
+  width: 80px;
+  height: 80px;
+  flex-shrink: 0;
+  border-radius: 8px;
+}
+
+.skeleton-video-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.skeleton-video-title {
+  width: 200px;
+  height: 20px;
+}
+
+.skeleton-video-time {
+  width: 100px;
+  height: 14px;
+}
+
+.skeleton-progress-bar {
+  width: 100%;
+  height: 6px;
+  border-radius: 3px;
+  margin-top: 4px;
+}
+
+.skeleton-table {
+  background: #1a1a1a;
+  border: 1px solid #2a2a2a;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.skeleton-table-header {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr 1fr;
+  gap: 16px;
+  padding: 16px 24px;
+  background: #0f0f0f;
+  border-bottom: 1px solid #2a2a2a;
+}
+
+.skeleton-table-header > div {
+  height: 16px;
+}
+
+.skeleton-table-row {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr 1fr;
+  gap: 16px;
+  padding: 16px 24px;
+  border-bottom: 1px solid #2a2a2a;
+}
+
+.skeleton-table-row:last-child {
+  border-bottom: none;
+}
+
+.skeleton-table-cell {
+  height: 20px;
+}
+
+.skeleton-table-cell.with-icon {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.skeleton-table-icon {
+  width: 48px;
+  height: 48px;
+  flex-shrink: 0;
+  border-radius: 6px;
+}
+
+.skeleton-table-text {
+  flex: 1;
+  height: 20px;
+}
+
+.skeleton-upload-container {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.skeleton-upload-area {
+  height: 300px;
+  border: 2px dashed #2a2a2a;
+  border-radius: 12px;
+  margin-bottom: 24px;
+}
+
+.skeleton-upload-button {
+  width: 200px;
+  height: 48px;
+  margin: 0 auto;
+}
+
+.skeleton-users-table .skeleton-table-header,
+.skeleton-users-table .skeleton-table-row {
+  grid-template-columns: 2fr 1fr 1fr 1fr 1fr;
+}
+
+@media (max-width: 1024px) {
+  .skeleton-stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+
+  .skeleton-stat-card {
+    height: 110px;
+    padding: 18px;
+  }
+}
+
+@media (max-width: 768px) {
+  .skeleton-stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+
+  .skeleton-stat-card {
+    height: 100px;
+    padding: 16px;
+  }
+
+  .skeleton-stat-value {
+    width: 50px;
+    height: 32px;
+  }
+
+  .skeleton-video-item {
+    flex-direction: column;
+  }
+
+  .skeleton-thumbnail {
+    width: 100%;
+    height: 120px;
+  }
+
+  .skeleton-table-header {
+    display: none;
+  }
+
+  .skeleton-table-row {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .skeleton-stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+
+  .skeleton-stat-card {
+    height: 90px;
+    padding: 14px;
+  }
+
+  .skeleton-stat-label {
+    width: 60px;
+    height: 14px;
+  }
+
+  .skeleton-stat-icon {
+    width: 20px;
+    height: 20px;
+  }
+
+  .skeleton-stat-value {
+    width: 45px;
+    height: 28px;
+  }
+
+  .skeleton-section-title {
+    width: 150px;
+    height: 20px;
+    margin-bottom: 20px;
+  }
+
+  .skeleton-video-item {
+    padding: 14px;
+  }
+
+  .skeleton-video-title {
+    width: 150px;
+    height: 18px;
+  }
+
+  .skeleton-video-time {
+    width: 80px;
+    height: 12px;
+  }
+}

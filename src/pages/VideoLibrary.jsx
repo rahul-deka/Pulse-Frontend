@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { videoAPI } from '../services/api';
 import { MdSearch, MdFilterList, MdVideocam, MdMoreVert } from 'react-icons/md';
 import './VideoLibrary.css';
+import '../components/Skeleton.css';
 
 const VideoLibrary = () => {
   const navigate = useNavigate();
@@ -16,6 +17,7 @@ const VideoLibrary = () => {
   const [editingVideoId, setEditingVideoId] = useState(null);
   const [editTitle, setEditTitle] = useState('');
   const [error, setError] = useState('');
+  const [deleteConfirmModal, setDeleteConfirmModal] = useState({ show: false, videoId: null, videoTitle: '' });
   const menuRef = useRef(null);
 
   useEffect(() => {
@@ -156,29 +158,72 @@ const VideoLibrary = () => {
     setError('');
   };
 
-  const handleDeleteVideo = async (videoId) => {
-    if (!window.confirm('Are you sure you want to delete this video? This action cannot be undone.')) {
-      return;
-    }
+  const handleDeleteVideo = (video) => {
+    setDeleteConfirmModal({ show: true, videoId: video._id, videoTitle: video.title });
+    setOpenMenuVideoId(null);
+  };
 
+  const confirmDelete = async () => {
+    const videoId = deleteConfirmModal.videoId;
+    setDeleteConfirmModal({ show: false, videoId: null, videoTitle: '' });
+    
     setError('');
     try {
       await videoAPI.delete(videoId);
       
       setVideos(videos.filter(v => v._id !== videoId));
-      setOpenMenuVideoId(null);
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to delete video');
     }
   };
 
+  const cancelDelete = () => {
+    setDeleteConfirmModal({ show: false, videoId: null, videoTitle: '' });
+  };
+
   if (loading) {
-    return <div className="loading">Loading videos...</div>;
+    return (
+      <div className="video-library">
+        <div className="library-header">
+          <div className="search-bar">
+            <MdSearch className="search-icon" />
+            <input type="text" placeholder="Search videos..." disabled />
+          </div>
+          <button className="filter-btn" disabled>
+            <MdFilterList />
+            <span>Filter</span>
+          </button>
+        </div>
+        <div className="filter-tabs">
+          {['All', 'Safe', 'Flagged', 'Processing'].map(tab => (
+            <button key={tab} className="filter-tab" disabled>{tab}</button>
+          ))}
+        </div>
+        <div className="skeleton-table">
+          <div className="skeleton-table-header">
+            {[1, 2, 3, 4, 5].map(i => (
+              <div key={i} className="skeleton"></div>
+            ))}
+          </div>
+          {[1, 2, 3, 4, 5].map(i => (
+            <div key={i} className="skeleton-table-row">
+              <div className="skeleton-table-cell with-icon">
+                <div className="skeleton skeleton-table-icon"></div>
+                <div className="skeleton skeleton-table-text"></div>
+              </div>
+              <div className="skeleton skeleton-table-cell"></div>
+              <div className="skeleton skeleton-table-cell"></div>
+              <div className="skeleton skeleton-table-cell"></div>
+              <div className="skeleton skeleton-table-cell"></div>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
   }
 
   return (
     <div className="video-library">
-      {/* Search and Filters */}
       <div className="library-header">
         <div className="search-bar">
           <MdSearch className="search-icon" />
@@ -195,7 +240,6 @@ const VideoLibrary = () => {
         </button>
       </div>
 
-      {/* Filter Tabs */}
       <div className="filter-tabs">
         <button
           className={`filter-tab ${activeFilter === 'all' ? 'active' : ''}`}
@@ -227,7 +271,6 @@ const VideoLibrary = () => {
         <div className="error-message">{error}</div>
       )}
 
-      {/* Videos Table */}
       {filteredVideos.length === 0 ? (
         <div className="empty-state">
           <p>No videos found</p>
@@ -244,14 +287,18 @@ const VideoLibrary = () => {
 
           <div className="table-body">
             {filteredVideos.map((video) => (
-              <div key={video._id} className="table-row">
+              <div 
+                key={video._id} 
+                className="table-row"
+                onClick={() => handleView(video._id)}
+              >
                 <div className="col-title">
                   <div className="video-info">
                     <div className="video-thumbnail-small">
                       <MdVideocam />
                     </div>
                     {editingVideoId === video._id ? (
-                      <div className="edit-title-container">
+                      <div className="edit-title-container" onClick={(e) => e.stopPropagation()}>
                         <input
                           type="text"
                           value={editTitle}
@@ -286,13 +333,7 @@ const VideoLibrary = () => {
                     {getStatusBadge(video.processingStatus === 'completed' ? video.sensitivityStatus : video.processingStatus).label}
                   </span>
                 </div>
-                <div className="col-actions">
-                  <button 
-                    className="action-btn"
-                    onClick={() => handleView(video._id)}
-                  >
-                    View
-                  </button>
+                <div className="col-actions" onClick={(e) => e.stopPropagation()}>
                   <div className="actions-menu-container" ref={openMenuVideoId === video._id ? menuRef : null}>
                     <button 
                       className="more-btn"
@@ -317,7 +358,7 @@ const VideoLibrary = () => {
                         <div className="dropdown-divider"></div>
                         <button
                           className="dropdown-item danger"
-                          onClick={() => handleDeleteVideo(video._id)}
+                          onClick={() => handleDeleteVideo(video)}
                         >
                           Delete Video
                         </button>
@@ -327,6 +368,27 @@ const VideoLibrary = () => {
                 </div>
               </div>
             ))}
+          </div>
+        </div>
+      )}
+
+      {deleteConfirmModal.show && (
+        <div className="modal-overlay" onClick={cancelDelete}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <h3 className="modal-title">Delete Video</h3>
+            <p className="modal-message">
+              Are you sure you want to delete <strong>{deleteConfirmModal.videoTitle}</strong> video?
+              <br />
+              This action cannot be undone.
+            </p>
+            <div className="modal-actions">
+              <button className="modal-btn cancel" onClick={cancelDelete}>
+                Cancel
+              </button>
+              <button className="modal-btn delete" onClick={confirmDelete}>
+                Delete
+              </button>
+            </div>
           </div>
         </div>
       )}
